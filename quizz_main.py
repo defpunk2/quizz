@@ -33,7 +33,7 @@ class quizz:
         play_btn.place(x=50,y=200)
         playtimed_btn = tk.Button(master=window,text = "Play Timed True or False", command = self.timeQuiz,width = 45,height=15,bg = "maroon2", font= 'Impact 20',fg =  "white")
         playtimed_btn.place(x=675,y=200)
-        create_btn = tk.Button(master=window,text = "Create", command = self.createEdit,width = 45,height=15,bg = "goldenrod3", font= 'Impact 20',fg =  "white")
+        create_btn = tk.Button(master=window,text = "Create or Edit", command = self.createEdit,width = 45,height=15,bg = "goldenrod3", font= 'Impact 20',fg =  "white")
         create_btn.place(x=1300,y=200)
         
     
@@ -178,17 +178,21 @@ class quizz:
         if len(self.quizz) == 1:
             title = tk.Label(master=window,text = "Sorry the quiz is empty choose another or go to create to make a new one!",fg = "gray13", font= 'Impact 17',bg = self.bg)
             title.place(x=700,y=100)
-            back_btn = tk.Button(master=window,text = "->", command = self.homeQuizz,width = 70,height=15,bg = "gray1",font= 'Impact 17',fg =  "white")
+            back_btn = tk.Button(master=window,text = "->", command = self.groupButtons,width = 70,height=15,bg = "gray1",font= 'Impact 17',fg =  "white")
             back_btn.place(x=700,y=400)
         else:   
             title = tk.Label(master=window,text = self.quizz[0],fg = "gray13", font= 'Impact 45',bg = self.bg)
-            title.place(x=800,y=100)
+            title.place(x=700,y=150)
             title = tk.Label(master=window,text =("By" , self.quizz[1]),fg = "gray13", font= 'Impact 25',bg = self.bg)
-            title.place(x=800,y=200)
+            title.place(x=700,y=250)
             back_btn = tk.Button(master=window,text = "->", command = self.gameStart,width = 70,height=15,bg = "gray1",font= 'Impact 17',fg =  "white")
-            back_btn.place(x=700,y=400)
+            back_btn.place(x=600,y=400)
             back_btn = tk.Button(master=window,text = "<-", command = self.groupButtons ,width = 5,height=1,bg = "gray1",font= 'Impact 17',fg =  "white")
             back_btn.place(x=1700,y=50)
+            if self.modechoice == "timeplay":
+                title1 = tk.Label(master=window,text ="Ready To Go ? , Click to start the timed quiz",fg = "gray13", font= 'Impact 35',bg = self.bg)
+                title1.place(x=570,y=50)
+            
         
     
     def gameStart(self):
@@ -198,28 +202,31 @@ class quizz:
         title.place(x=600,y=100)
         self.num = self.num + 1
         game.game_buttons()
+            
+
         
     def con(self):
+        self.numq = int((len(self.quizz)-3)/2)
         if self.num == (len(self.quizz)-1):
             for widget in window.winfo_children():
                 widget.destroy()
                 game.highRead()
             if self.highscore > self.score:
-                text = ("Quiz over, You got " + str(self.score) + "/"+ str(self.q + 1))
-                text2 = ("High Score " + str(self.highscore) +"/"+ str(self.q + 1) )
+                text = ("Quiz over, You got " + str(self.score) + "/"+ str(self.numq))
+                text2 = ("High Score " + str(self.highscore) +"/"+ str(self.numq))
                 title = tk.Label(master=window,text = (text),fg = "gray13", font= 'Impact 35',bg = self.bg)
                 title.place(x=600,y=100)
                 title = tk.Label(master=window,text = (text2),fg = "gray13", font= 'Impact 35',bg = self.bg)
                 title.place(x=600,y=300)
-                back_btn = tk.Button(master=window,text = "->", command = self.homeQuizz,width = 70,height=15,bg = "gray1",font= 'Impact 17',fg =  "white")
+                back_btn = tk.Button(master=window,text = "->", command = self.groupButtons,width = 70,height=15,bg = "gray1",font= 'Impact 17',fg =  "white")
                 back_btn.place(x=700,y=400)
             else:
-                text = ("Quiz over, You got " + str(self.score) + "/"+ str(self.q + 1)) 
+                text = ("Quiz over, You got " + str(self.score) + "/"+ str(self.numq))
                 title = tk.Label(master=window,text = (text),fg = "gray13", font= 'Impact 35',bg = self.bg)
                 title.place(x=600,y=100)
                 title = tk.Label(master=window,text = ("New High Score"),fg = "gray13", font= 'Impact 20',bg = self.bg)
                 title.place(x=600,y=300)
-                back_btn = tk.Button(master=window,text = "->", command = self.homeQuizz,width = 70,height=15,bg = "gray1",font= 'Impact 17',fg =  "white")
+                back_btn = tk.Button(master=window,text = "->", command = self.groupButtons,width = 70,height=15,bg = "gray1",font= 'Impact 17',fg =  "white")
                 back_btn.place(x=700,y=400)
             self.highWrite()
             self.q = 0
@@ -231,11 +238,10 @@ class quizz:
             
             
     def Run(self):
-        if self.modechoice == "play":
-            self.quizzRun()
-        elif self.modechoice == "timeplay":
-            self.startTimequizz()
-            
+        for widget in window.winfo_children():
+            widget.destroy()
+        if self.modechoice == "play" or self.modechoice == "timeplay":
+            self.quizzRun()       
         else:
             self.whatTask()
         
@@ -324,15 +330,31 @@ class quizz:
         self.con()
             
     def game_buttons(self):
-        true_btn = tk.Button(master=window,text = "True", command = self.true,width = 45,height=20,bg = "green",font= 'Impact 17',fg =  "white")
-        true_btn.place(x=450,y=200)
-
-        false_btn = tk.Button(master=window,text = "False", command = self.false,width = 45,height=20,bg = "red",font= 'Impact 17',fg =  "white")
-        false_btn.place(x=1150,y=200)
-        
-        back_btn = tk.Button(master=window,text = "<-", command = self.groupButtons,width = 5,height=1,bg = "gray1",font= 'Impact 17',fg =  "white")
-        back_btn.place(x=1700,y=50)
-            
+         true_btn = tk.Button(master=window,text = "True", command = self.true,width = 45,height=20,bg = "green",font= 'Impact 17',fg =  "white")
+         true_btn.place(x=450,y=200)
+         false_btn = tk.Button(master=window,text = "False", command = self.false,width = 45,height=20,bg = "red",font= 'Impact 17',fg =  "white")
+         false_btn.place(x=1150,y=200)
+         back_btn = tk.Button(master=window,text = "<-", command = self.groupButtons,width = 5,height=1,bg = "gray1",font= 'Impact 17',fg =  "white")
+         back_btn.place(x=1700,y=50)
+         if self.modechoice == "timeplay":
+             self.go = True
+             title2 = tk.Label(master=window,text = ("Time Left"),fg = "gray13", font= 'Impact 35',bg = self.bg)
+             title2.place(x=100,y=100)
+             timeout = t.time() + 5
+             r = t.time()
+             x = timeout - t.time()
+             while t.time() < timeout and self.go == True:
+                 if t.time() > r + 1:
+                    r = t.time()
+                    y = timeout - t.time()
+                    x = round(y)
+                    title2.config(text = ("Time Left " + str(x)))
+                    title2.update()
+             self.ans = "x"
+             self.con()
+                 
+         
+                
         
     def createNew(self):
         self.x = 0 
@@ -405,34 +427,7 @@ class quizz:
             
             
         
-    def startTimequizz(self):
-        for widget in window.winfo_children():
-            widget.destroy()
-        if len(self.quizz) == 1:
-            title = tk.Label(master=window,text = "Sorry the quiz is empty choose another or go to create to make a new one!",fg = "gray13", font= 'Impact 17',bg = self.bg)
-            title.place(x=700,y=100)
-            back_btn = tk.Button(master=window,text = "->", command = self.groupButtons,width = 70,height=15,bg = "gray1",font= 'Impact 17',fg =  "white")
-            back_btn.place(x=700,y=400)
-        else:
-            title = tk.Label(master=window,text ="Ready To Go ? , Click to start the timed quiz",fg = "gray13", font= 'Impact 35',bg = self.bg)
-            title.place(x=600,y=300)   
-            title = tk.Label(master=window,text = self.quizz[0],fg = "gray13", font= 'Impact 45',bg = self.bg)
-            title.place(x=650,y=100)
-            title = tk.Label(master=window,text =("By" , self.quizz[1]),fg = "gray13", font= 'Impact 25',bg = self.bg)
-            title.place(x=650,y=200)       
-            back_btn = tk.Button(master=window,text = "<-", command = self.groupButtons,width = 5,height=1,bg = "gray1",font= 'Impact 17',fg =  "white")
-            back_btn.place(x=1700,y=50)
-            back_btn = tk.Button(master=window,text = "->", command = self.timestarter,width = 30,height=5,bg = "gray1",font= 'Impact 35',fg =  "white")
-            back_btn.place(x=620,y=400)
-        
-    def timestarter(self):
-        self.starttime = t.time()
-        self.num = 2
-        self.gameStart()
-        
-    
-     
-        
+
 
 
 game = quizz()
